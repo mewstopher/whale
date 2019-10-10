@@ -16,6 +16,7 @@ pillow = "*"
 scikit-learn = "*"
 scikit-image = "*"
 torchvision = "*"
+whale-itenifier = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
