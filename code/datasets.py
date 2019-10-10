@@ -1,6 +1,8 @@
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
+from skimage import io, transform
+from torchvision import transforms, utils
 
 IMAGE_PATH = '../input/train/'
 CSV_PATH = '../input/labels/train.csv'
@@ -23,6 +25,7 @@ class WhaleDataset(Dataset):
         self.df = pd.read_csv(csv_file)
         self.img_dir = img_dir
         self.transform = transform
+        self.labeled_df = self._remove_unkowns()
 
 
     def _remove_unkowns(self):
@@ -30,17 +33,30 @@ class WhaleDataset(Dataset):
         remove ids that are labeled
         as 'new whale
         """
-        pass
+        labeled_df = self.df.loc[self.df['Id'] != 'new_whale']
+        return labeled_df
 
     def __len__(self):
         """
         just the size of the dataset
         """
-        pass
+        return len(self.labeled_df)
 
-    def __getitem__(self):
+    def __getitem__(self, idx):
         """
         return an example from the
         data set (dictionary)
         """
-        pass
+        if torch.is_tensor(idx):
+            ids = idx.to_list()
+        img_name = os.path.join(self.img_dir, self.labeled_df[idx, 0])
+        image = io.read(img_name)
+        label = self.labeled_df.iloc[idx, 1]
+        sample = {'image' : image, 'label': label}
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
+
+
+

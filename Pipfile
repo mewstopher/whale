@@ -12,8 +12,10 @@ matplotlib = "*"
 ipykernel = "*"
 jupyter = "*"
 Image = "*"
-pil = "*"
 pillow = "*"
+scikit-learn = "*"
+scikit-image = "*"
+torchvision = "*"
 
 [requires]
 python_version = "3.7"
