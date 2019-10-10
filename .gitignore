@@ -1,6 +1,5 @@
 .ipynb_checkpoints
 labels
-data
 test
 .DS_store
 whale_identifier/input/*
