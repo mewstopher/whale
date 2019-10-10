@@ -19,6 +19,11 @@ class Rescale(object):
         self.output_size = output_size
 
     def __call__(self, sample):
+        """
+        takes in a sample of the data. Uses the
+        output size to resize the original image
+        so that all images are same size
+        """
         image, label = sample['image'], sample['label']
         h, w = image.shape[:2]
         if isinstance(self.output_size, int):
