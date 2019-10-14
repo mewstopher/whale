@@ -4,6 +4,7 @@ from torch.utils.data import Dataset
 from skimage import io, transform
 from torchvision import transforms, utils
 from .transformations import Rescale
+import os
 
 IMAGE_PATH = '../input/train/'
 CSV_PATH = '../input/labels/train.csv'
@@ -26,6 +27,7 @@ class WhaleDataset(Dataset):
         self.df = pd.read_csv(csv_file)
         self.img_dir = img_dir
         self.transform = transform
+        self.label_to_number, self.number_to_label = self._build_label_dict()
         self.labeled_df = self._remove_unkowns()
 
 
@@ -36,6 +38,15 @@ class WhaleDataset(Dataset):
         """
         labeled_df = self.df.loc[self.df['Id'] != 'new_whale']
         return labeled_df
+
+    def _build_label_dict(self):
+        sorted_labels = sorted(self.df.Id.unique())
+        label_to_number = {}
+        number_to_label = {}
+        for i, j in enumerate(sorted_labels):
+            label_to_number[j] = i
+            number_to_label[i] = j
+        return label_to_number, number_to_label
 
     def __len__(self):
         """
@@ -48,11 +59,10 @@ class WhaleDataset(Dataset):
         return an example from the
         data set (dictionary)
         """
-        if torch.is_tensor(idx):
-            ids = idx.to_list()
-        img_name = os.path.join(self.img_dir, self.labeled_df[idx, 0])
-        image = io.read(img_name)
-        label = self.labeled_df.iloc[idx, 1]
+        img_name = os.path.join(self.img_dir, self.labeled_df.iloc[idx, 0])
+        image = io.imread(img_name)
+        label_as_str = self.labeled_df.iloc[idx, 1]
+        label = self.label_to_number[label_as_str]
         sample = {'image' : image, 'label': label}
         if self.transform:
             sample = self.transform(sample)
