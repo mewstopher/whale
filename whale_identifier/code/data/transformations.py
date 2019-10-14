@@ -9,6 +9,8 @@ class ToTensor(object):
 
     def __call__(self, sample):
         image, label = sample['image'], np.array(sample['label'])
+        if image.ndim != 3:
+            image = np.stack((image,)*3, axis=-1)
 
         # swap color axis because
         # numpy image: H x W x C

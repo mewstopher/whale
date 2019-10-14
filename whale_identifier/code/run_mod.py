@@ -16,7 +16,7 @@ whale_data = WhaleDataset(CSV_PATH, IMG_PATH, transform=transforms.Compose([Resc
 
 data_loader = DataLoader(whale_data, 1)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-model = BasicCnn()
+model = BasicCnn(device)
 
 CELoss = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=.001)

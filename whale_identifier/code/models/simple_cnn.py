@@ -12,7 +12,7 @@ class BasicCnn(nn.Module):
         self.conv2 = nn.Conv2d(10, 20, 3)
         self.conv3 = nn.Conv2d(20, 50, 3)
         self.conv4 = nn.Conv2d(50, 100, 3)
-        self.fc1 = nn.Linear(30800, 10000)
+        self.fc1 = nn.Linear(19600, 10000)
         self.fc2 = nn.Linear(10000, 5004)
         self.to(device)
 
