@@ -4,3 +4,4 @@ test
 .DS_store
 whale_identifier/input/*
 lab_notes.txt
+whale_identifier/code/AWS_train.ipynb
