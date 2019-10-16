@@ -5,7 +5,11 @@ import numpy as np
 
 
 class ToTensor(object):
-    """Convert ndarrays in sample to Tensors."""
+    """
+    Convert ndarrays in sample to Tensors.
+    if image is black and white(1 dimensional),
+    then change to 3 dimensions
+    """
 
     def __call__(self, sample):
         image, label = sample['image'], np.array(sample['label'])
