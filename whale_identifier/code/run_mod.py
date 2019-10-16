@@ -21,13 +21,8 @@ model = BasicCnn(device)
 CELoss = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=.001)
 
-output = model(batch)
-optimizer.zero_grad()
-loss = CELoss(output, label)
 for i, sample_data in enumerate(data_loader, 0):
     print(f'iteration {i}')
-    if i > 0:
-        break
     batch = sample_data['image'].to(torch.float32)
     label = sample_data['label']
     batch = Variable(batch)
@@ -37,6 +32,7 @@ for i, sample_data in enumerate(data_loader, 0):
     loss = CELoss(output, label)
     loss.backward()
     optimizer.step()
+    print(f'loss {loss}')
 
 
 
