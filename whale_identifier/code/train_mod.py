@@ -9,7 +9,7 @@ class WhaleTrainer:
     accuracies = {}
 
     def __init__(self, model, train_dataloader, val_dataloader, num_epochs,
-                Loss, optimizer, model_path=None,save_path=None, save=False, load=False):
+                Loss, optimizer, device, model_path=None,save_path=None, save=False, load=False):
         self.model = model
         self.save_choice = save
         if load:
@@ -31,7 +31,9 @@ class WhaleTrainer:
         for epoch in range(self.num_epochs):
             self.losses[epoch] = []
             self.accuracies[epoch] = []
-            for i, sample_data in enumerate(self.train_dataloader, 0):
+            for sample_data in self.train_dataloader:
+                for j in sample_data:
+                    sample_data[j] = sample_data.to(self.device)
                 count +=1
                 batch = sample_data['image'].to(torch.float32)
                 label = sample_data['label']
