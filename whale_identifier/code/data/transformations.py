@@ -61,4 +61,11 @@ class Rescale(object):
         return {'image': img, 'label' : label}
 
 
-
+class Normalize(object):
+    """
+    normalize tensor
+    """
+    def __call__(self, sample):
+        image, label = sample['image'], sample['image']
+        image_normalized = image/255
+        return {'image' : image_normalized, 'label' : label}
