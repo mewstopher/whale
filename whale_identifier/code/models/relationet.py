@@ -1,4 +1,5 @@
-
+import torch
+import torch.nn as nn
 
 class CNNEncoder(nn.Module):
     """docstring for ClassName"""
