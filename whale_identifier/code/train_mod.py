@@ -33,7 +33,7 @@ class WhaleTrainer:
             self.accuracies[epoch] = []
             for sample_data in self.train_dataloader:
                 for j in sample_data:
-                    sample_data[j] = sample_data.to(self.device)
+                    sample_data[j] = sample_data[j].to(self.device)
                 count +=1
                 batch = sample_data['image'].to(torch.float32)
                 label = sample_data['label']
