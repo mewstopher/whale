@@ -22,6 +22,7 @@ class WhaleTrainer:
         self.save_path = save_path
         self.num_epochs = num_epochs
         self.optimizer = optimizer
+        self.device = device
 
     def train(self):
         print('begginning to train the machine')
