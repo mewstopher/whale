@@ -51,7 +51,7 @@ class WhaleTrainer:
                 accuracy = correct/total
                 self.accuracies[epoch].append(accuracy)
                 if count % 10 == 0:
-                    print(f'loss at iteration {i}: {loss}')
+                    print(f'loss at iteration {count}: {loss}')
                     print(f'accuracy: {accuracy}')
 
 

@@ -66,6 +66,6 @@ class Normalize(object):
     normalize tensor
     """
     def __call__(self, sample):
-        image, label = sample['image'], sample['image']
+        image, label = sample['image'], sample['label']
         image_normalized = image/255
         return {'image' : image_normalized, 'label' : label}
