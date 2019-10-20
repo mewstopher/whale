@@ -37,22 +37,53 @@ data = data_loader.__iter__().next()
 images1 = data[0]['image']
 images2 = data[1]['image']
 
-for i, j in enumerate(images1):
-    images1[i] = j.to(device)
+# training loop
+count = 0
+for data in data_loader:
+    count +=1
+    first_set = data[0]
+    second_set = data[1]
+    images1 = first_set['image']
+    images2 = second_set['image']
+    labels1 = first_set['label']
+    labels2 = second_set['label']
 
-images1 = Variable(data[0]['image'])
-images1 = images1.to(torch.float)
-images2 = images2.to(torch.float)
-encoder_output = encoder(images1)
-batch_output = encoder(images2)
-encoder_output_ext = encoder_output.unsqueeze(0).repeat(1*5,1,1,1,1)
-batch_features_ext = batch_output.unsqueeze(0).repeat(1*5,1,1,1,1)
-batch_features_ext_trans = torch.transpose(batch_features_ext,0,1)
-relation_pairs = torch.cat((encoder_output_ext, batch_features_ext_trans),2).view(-1,64*2,5,5)
+    # send labels and images to device
+    images1 = images1.to(device)
+    images2 = images2.to(device)
+    labels1 = labels1.to(device)
+    labels2 = labels2.to(device)
 
-relater_output = relater(relation_pairs)
+    images1 = images1.to(torch.float)
+    images2 = images2.to(torch.float)
+    encoder_output = encoder(images1)
+    batch_output = encoder(images2)
+    #encoder_output_ext = encoder_output.unsqueeze(0).repeat(1*5,1,1,1,1)
+    #batch_features_ext = batch_output.unsqueeze(0).repeat(1*5,1,1,1,1)
+    #batch_features_ext_trans = torch.transpose(batch_features_ext,0,1)
+    relation_pairs = torch.cat((encoder_output, batch_output),2).view(-1,64*2,62,62)
 
-labels1 = data[0]['label']
-one_hot_labels = Variable(labels1.view(-1,1).to(torch.float))
-loss = MSELoss(relater_output, one_hot_labels)
+    relater_output = relater(relation_pairs)
 
+    one_hot_labels = torch.nn.functional.one_hot(labels1.view(-1,1)).view(5,max(labels1).item()+1).to(torch.float)
+
+    loss = MSELoss(relater_output, one_hot_labels)
+    encoder.zero_grad()
+    relater.zero_grad()
+    loss.backward()
+    encoder_optim.step()
+    relater_optim.step()
+    print(f'loss at iteration{count}: {loss}')
+    if count ==20:
+        break
+
+
+one_hot_labels1 = Variable(torch.zeros(5, 5).scatter_(1, labelsll.view(-1,1), 1))
+n= 5
+indices = torch.randint(0,n, size=(5,1))
+one_hot = torch.nn.functional.one_hot(indices).to(torch.float)
+one_hot_one = one_hot.view(-1,5,5)
+
+real_onehot = torch.nn.functional.one_hot(labels1.view(-1,1)).to(torch.float)
+loss = MSELoss(relater_output, one_hot)
+loss_2 = MSELoss(relater_output, one_hot_one)
