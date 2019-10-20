@@ -3,7 +3,7 @@ import torch.nn as nn
 
 class CNNEncoder(nn.Module):
     """docstring for ClassName"""
-    def __init__(self):
+    def __init__(self, device):
         super(CNNEncoder, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(3,64,kernel_size=3,padding=0),
@@ -23,6 +23,7 @@ class CNNEncoder(nn.Module):
             nn.Conv2d(64,64,kernel_size=3,padding=1),
             nn.BatchNorm2d(64, momentum=1, affine=True),
             nn.ReLU())
+        self.to(device)
 
     def forward(self,x):
         out = self.layer1(x)
@@ -34,7 +35,7 @@ class CNNEncoder(nn.Module):
 
 class RelationNetwork(nn.Module):
     """docstring for RelationNetwork"""
-    def __init__(self,input_size,hidden_size):
+    def __init__(self,input_size,hidden_size, device):
         super(RelationNetwork, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(128,64,kernel_size=3,padding=0),
@@ -48,6 +49,7 @@ class RelationNetwork(nn.Module):
             nn.MaxPool2d(2))
         self.fc1 = nn.Linear(input_size*3*3,hidden_size)
         self.fc2 = nn.Linear(hidden_size,1)
+        self.to(device)
 
     def forward(self,x):
         out = self.layer1(x)

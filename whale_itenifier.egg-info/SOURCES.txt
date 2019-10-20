@@ -1,12 +1,15 @@
 setup.py
 whale_identifier/__init__.py
 whale_identifier/code/__init__.py
-whale_identifier/code/run_mod.py
 whale_identifier/code/torch_trial.py
 whale_identifier/code/data/__init__.py
 whale_identifier/code/data/datasets.py
+whale_identifier/code/data/relationset.py
 whale_identifier/code/data/transformations.py
+whale_identifier/code/evaluation/__init__.py
+whale_identifier/code/evaluation/eval.py
 whale_identifier/code/models/__init__.py
+whale_identifier/code/models/relationet.py
 whale_identifier/code/models/simple_cnn.py
 whale_itenifier.egg-info/PKG-INFO
 whale_itenifier.egg-info/SOURCES.txt

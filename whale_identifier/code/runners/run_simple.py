@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms, utils
 import torch.nn as nn
 import logging
-from whale_identifier.code.train_mod import WhaleTrainer
+from whale_identifier.code.trainers.train_mod import WhaleTrainer
 LOG = logging.getLogger(__name__)
 
 CSV_PATH = "../input/labels/train.csv"

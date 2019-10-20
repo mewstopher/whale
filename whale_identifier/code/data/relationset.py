@@ -8,7 +8,7 @@ import os
 IMAGE_PATH = '../input/train/'
 CSV_PATH = '../input/labels/train.csv'
 
-class WhaleDataset(Dataset):
+class WhaleRelationset(Dataset):
     """
     Whale Pytorch Dataset Class
     """
