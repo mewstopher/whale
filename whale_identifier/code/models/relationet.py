@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class CNNEncoder(nn.Module):
     """docstring for ClassName"""
@@ -47,7 +48,7 @@ class RelationNetwork(nn.Module):
             nn.BatchNorm2d(64, momentum=1, affine=True),
             nn.ReLU(),
             nn.MaxPool2d(2))
-        self.fc1 = nn.Linear(input_size*3*3,hidden_size)
+        self.fc1 = nn.Linear(12544,hidden_size)
         self.fc2 = nn.Linear(hidden_size,1)
         self.to(device)
 
