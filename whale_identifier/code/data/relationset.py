@@ -67,13 +67,6 @@ class WhaleRelationset(Dataset):
         image_match = label_excluded.sample(n=self.k_way, replace=True)
         return image_match
 
-    def _relabel(self):
-        """
-        re-label a set of observations
-        from 1:n.
-        """
-        pass
-
 
     def __len__(self):
         """
