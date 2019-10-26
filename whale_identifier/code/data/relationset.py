@@ -55,6 +55,46 @@ class WhaleRelationset(Dataset):
             number_to_label[i] = j
         return label_to_number, number_to_label
 
+    def label_to_indices(self, sample_labels):
+        """
+        convert label(tensor) to its sorted index
+        """
+        label_to_indices = {}
+        indices_to_label = {}
+        for i, j in enumerate(sample_labels):
+            label_to_indices[j] = i
+            indices_to_label[i] = j
+
+        return label_to_indices, indices_to_label
+
+
+    def convert_to_indices(self, sample_labels, batch_labels):
+        """
+        returns labels (sample or batch) based on
+        index dict
+        """
+        label_to_indices, _ = self.label_to_indices(sample_labels)
+        for i, j in enumerate(sample_labels):
+            sample_labels[i] = label_to_indices[j]
+
+        for i, j in enumerate_batch_labels:
+            batch_labels[i] = label_to_indices[j]
+
+        return sample_labels, batch_labels
+
+
+    def shuffle_batches(self, batches, batch_labels):
+        """
+        returns a randomly shuffle batches and labels
+        arrays
+        """
+        indices = np.arrange(batch.shape[0])
+        np.random.shuffle(indices)
+        batch_labels = batch_labels[indices]
+        batches = batches[indices]
+
+        return batches, batch_labels
+
     def _return_random_sample(self, idx):
         """
         provided a class, returns a random
@@ -83,23 +123,25 @@ class WhaleRelationset(Dataset):
         image = io.imread(img_name)
         label_as_str = self.labeled_df.iloc[idx, 1]
         label = self.label_to_number[label_as_str]
+
         random_match = self._return_random_sample(idx)
         match_names = [os.path.join(self.img_dir, random_match.iloc[i, 0]) for i in range(len(random_match))]
         matches = [io.imread(i) for i in match_names]
         match_label_str = random_match.iloc[0,1]
         match_label = self.label_to_number[match_label_str]
+
         sample = {'image' : image, 'label': label}
-        matched_sample = {'image': matches, 'label': match_label}
+        matched_sample = {'image': matches, 'label': np.repeat(match_label, self.k_way)}
         if self.transform:
             sample = self.transform(sample)
             transformed_match_imgs= []
             for i in matched_sample['image']:
-                match_dict = {'image': i, 'label': matched_sample['label']}
+                match_dict = {'image': i, 'label': match_label}
                 transformed_dict = self.transform(match_dict)
                 transformed_match_imgs.append(transformed_dict['image'])
-            matched_sample = {'image': torch.stack(transformed_match_imgs), 'label': matched_sample['label']}
+            matched_sample = {'image': torch.stack(transformed_match_imgs),
+                              'label': np.repeat(match_label, self.k_way)}
 
         return sample, matched_sample
-
 
 
