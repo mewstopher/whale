@@ -55,46 +55,6 @@ class WhaleRelationset(Dataset):
             number_to_label[i] = j
         return label_to_number, number_to_label
 
-    def label_to_indices(self, sample_labels):
-        """
-        convert label(tensor) to its sorted index
-        """
-        label_to_indices = {}
-        indices_to_label = {}
-        for i, j in enumerate(sample_labels):
-            label_to_indices[j.item()] = i
-            indices_to_label[i] = j.item()
-
-        return label_to_indices, indices_to_label
-
-
-    def convert_to_indices(self, sample_labels, batch_labels):
-        """
-        returns labels (sample or batch) based on
-        index dict
-        """
-        label_to_indices, _ = self.label_to_indices(sample_labels)
-        for i, j in enumerate(sample_labels):
-            sample_labels[i] = label_to_indices[j.item()]
-
-        for i, j in enumerate(batch_labels):
-            batch_labels[i] = label_to_indices[j.item()]
-
-        return sample_labels, batch_labels
-
-
-    def shuffle_batches(self, batch, batch_labels):
-        """
-        returns a randomly shuffle batches and labels
-        arrays
-        """
-        indices = np.arange(batch.shape[0])
-        np.random.shuffle(indices)
-        batch_labels = batch_labels[indices]
-        batch = batch[indices]
-
-        return batch, batch_labels
-
     def _return_random_sample(self, idx):
         """
         provided a class, returns a random
@@ -143,5 +103,91 @@ class WhaleRelationset(Dataset):
                               'label': np.repeat(match_label, self.k_way)}
 
         return sample, matched_sample
+
+
+class Processor:
+
+    def __init__(self, data, num_batches, classes, img_size, device):
+        self.data = data
+        self.nb = num_batches
+        self.classes = classes
+        self.img_sz = img_size
+        self.device = device
+        self.sample, self.sample_labels, self.batch, self.batch_labels = self.extract_data()
+        if hasattr(self,'labels_to_indices') and hasattr(self, 'indices_to_label'):
+            print('already has been instatntiated')
+        else:
+            self.labels_to_indices, self.indices_to_labels = self._build_dicts()
+
+    def extract_data(self):
+        sample_data, batch_data = self.data
+
+        #extract data and send to device
+        sample = sample_data['image']
+        sample_labels = sample_data['label']
+        batch = batch_data['image']
+        batch_labels = batch_data['label']
+
+        return sample, sample_labels, batch, batch_labels
+
+
+    def process_sample(self):
+        sample_labels = self._sample_to_indices()
+        sample_labels = sample_labels.to(self.device)
+        sample = self.sample.to(self.device)
+        sample = sample.to(torch.float)
+        return sample, sample_labels
+
+    def process_batch(self):
+        batch_labels = self._batch_to_indices()
+        batch = self.batch.view(-1, self.nb*self.classes, 3, self.img_sz, self.img_sz).squeeze()
+        batch, batch_labels = self.shuffle_batches(batch, batch_labels)
+        batch = batch.to(self.device)
+        batch_labels = batch_labels.to(self.device)
+        batch = batch.to(torch.float)
+        return batch, batch_labels
+
+    def _build_dicts(self):
+        """
+        convert label(tensor) to its sorted index
+        """
+        labels_to_indices = {}
+        indices_to_label = {}
+        for i, j in enumerate(self.sample_labels):
+            labels_to_indices[j.item()] = i
+            indices_to_label[i] = j.item()
+
+        return labels_to_indices, indices_to_label
+
+    def _sample_to_indices(self):
+        sample_labels = self.sample_labels
+        for i, j in enumerate(self.sample_labels):
+            sample_labels[i] = self.labels_to_indices[j.item()]
+
+        return sample_labels
+
+    def _batch_to_indices(self):
+        """
+        returns labels (sample or batch) based on
+        index dict
+        """
+        batch_labels = self.batch_labels.view(-1)
+        for i, j in enumerate(batch_labels):
+            batch_labels[i] = self.labels_to_indices[j.item()]
+
+        return  batch_labels
+
+
+    def shuffle_batches(self, batch, batch_labels):
+        """
+        returns a randomly shuffle batches and labels
+        arrays
+        """
+        indices = np.arange(batch.shape[0])
+        np.random.shuffle(indices)
+        batch_labels = batch_labels[indices]
+        batch = batch[indices]
+
+        return batch, batch_labels
 
 

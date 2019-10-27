@@ -1,18 +1,14 @@
 import torch
-from torch.autograd import Variable
-from torchvision import models
-import torch.nn.functional as F
 from whale_identifier.code.models.relationet import CNNEncoder, RelationNetwork
-from whale_identifier.code.data.relationset import WhaleRelationset
+from whale_identifier.code.data.relationset import WhaleRelationset, Processor
 from whale_identifier.code.data.transformations import ToTensor, Rescale, Normalize
+from whale_identifier.code.trainers.train_relationet import TrainRelationet
 from torch.utils.data import DataLoader
 from torchvision import transforms, utils
 import torch.nn as nn
 import logging
 from whale_identifier.code.trainers.train_mod import WhaleTrainer
-LOG = logging.getLogger(__name__)
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
+
 # set PATHs
 CSV_PATH = "../input/labels/train.csv"
 IMG_PATH = "../input/train/"
@@ -40,6 +36,9 @@ encoder_optim = torch.optim.Adam(encoder.parameters(), lr=.0001)
 relater_optim = torch.optim.Adam(relater.parameters(), lr=.0001)
 
 
+trainer = TrainRelationet(encoder, relater, MSELoss, encoder_optim, relater_optim,
+                          data_loader, 1, 19, 5,IMG_SIZE, device)
+trainer.run()
 
 # training loop
 count = 0
