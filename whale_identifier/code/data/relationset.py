@@ -62,8 +62,8 @@ class WhaleRelationset(Dataset):
         label_to_indices = {}
         indices_to_label = {}
         for i, j in enumerate(sample_labels):
-            label_to_indices[j] = i
-            indices_to_label[i] = j
+            label_to_indices[j.item()] = i
+            indices_to_label[i] = j.item()
 
         return label_to_indices, indices_to_label
 
@@ -75,25 +75,25 @@ class WhaleRelationset(Dataset):
         """
         label_to_indices, _ = self.label_to_indices(sample_labels)
         for i, j in enumerate(sample_labels):
-            sample_labels[i] = label_to_indices[j]
+            sample_labels[i] = label_to_indices[j.item()]
 
-        for i, j in enumerate_batch_labels:
-            batch_labels[i] = label_to_indices[j]
+        for i, j in enumerate(batch_labels):
+            batch_labels[i] = label_to_indices[j.item()]
 
         return sample_labels, batch_labels
 
 
-    def shuffle_batches(self, batches, batch_labels):
+    def shuffle_batches(self, batch, batch_labels):
         """
         returns a randomly shuffle batches and labels
         arrays
         """
-        indices = np.arrange(batch.shape[0])
+        indices = np.arange(batch.shape[0])
         np.random.shuffle(indices)
         batch_labels = batch_labels[indices]
-        batches = batches[indices]
+        batch = batch[indices]
 
-        return batches, batch_labels
+        return batch, batch_labels
 
     def _return_random_sample(self, idx):
         """
