@@ -41,7 +41,7 @@ class TrainRelationet:
                 relation_pairs = torch.cat((encoder_output_ext, batch_features_ext_trans),2).view(-1,64*2,62,62)
 
                 relater_output = self.relater(relation_pairs).view(-1, self.classes)
-                one_hot_labels = Variable(torch.zeros(self.num_batches*self.classes, self.classes).scatter_(1, batch_labels.view(-1, 1), 1))
+                one_hot_labels = Variable(torch.zeros(self.num_batches*self.classes, self.classes).to(self.device).scatter_(1, batch_labels.view(-1, 1), 1))
 
                 loss = self.Loss(relater_output, one_hot_labels)
                 self.losses[epoch].append(loss)
