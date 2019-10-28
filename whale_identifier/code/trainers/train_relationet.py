@@ -89,6 +89,14 @@ class TrainRelationet:
                 torch.save(self.relater.state_dict(), self.save_path + 'relater' + str(datetime.now()).split()[0])
                 self.logger.info('model saved')
 
+    def plot_accuracies(self):
+        accuracy_list = [i for epoch in self.accuracies for i in self.accuracies[epoch]]
+        return plt.plot(accuracy_list)
+
+    def plot_losses(self):
+        loss_list = [i for epoch in self.losses for i in self.losses[epoch]]
+        return plt.plot(loss_list)
+
     def run(self):
         try:
             self.train()
