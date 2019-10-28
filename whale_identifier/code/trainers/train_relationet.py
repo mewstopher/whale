@@ -15,7 +15,7 @@ class TrainRelationet:
     accuracies = {}
     total = 0
 
-    def __init__(self,encoder, relater, Loss,encoder_optim, relater_optim, train_loader, val_dataloader, num_epochs, num_batches, classes,img_size, device, model_path=None, save_path=None, save=False, load_model=False, show_every=50):
+    def __init__(self,encoder, relater, Loss,encoder_optim, relater_optim, train_loader, val_dataloader, num_epochs, num_batches, classes,img_size, device, encoder_path=None,relater_path=None,  save_path=None, save=False, load_model=False, show_every=50):
         self.logger = logging.getLogger(__name__)
         self.train_loader = train_loader
         self.num_epochs = num_epochs
@@ -31,10 +31,11 @@ class TrainRelationet:
         self.save_choice(save, save_path)
         self.show_every = show_every
         if load_model:
-            self.encoder.load_state_dict(torch.load(model_path + 'encoder'))
-            self.relater.laod_state_dict(torch.load(model_path + 'relator'))
+            self.encoder.load_state_dict(torch.load(encoder_path))
+            self.relater.laod_state_dict(torch.load(relater_path))
             self.encoder.train()
             self.relater.train()
+            logger.info('relater and encoder nets loaded!')
         self.save = save
         self.save_path = save_path
 
