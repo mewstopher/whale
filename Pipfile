@@ -17,6 +17,7 @@ scikit-learn = "*"
 scikit-image = "*"
 torchvision = "*"
 whale-itenifier = {editable = true,path = "."}
+tensorboardx = "*"
 
 [requires]
 python_version = "3.7"

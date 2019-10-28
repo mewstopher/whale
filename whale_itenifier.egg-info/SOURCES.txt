@@ -1,6 +1,7 @@
 setup.py
 whale_identifier/__init__.py
 whale_identifier/code/__init__.py
+whale_identifier/code/helper_functions.py
 whale_identifier/code/torch_trial.py
 whale_identifier/code/data/__init__.py
 whale_identifier/code/data/datasets.py
@@ -11,6 +12,9 @@ whale_identifier/code/evaluation/eval.py
 whale_identifier/code/models/__init__.py
 whale_identifier/code/models/relationet.py
 whale_identifier/code/models/simple_cnn.py
+whale_identifier/code/trainers/__init__.py
+whale_identifier/code/trainers/train_mod.py
+whale_identifier/code/trainers/train_relationet.py
 whale_itenifier.egg-info/PKG-INFO
 whale_itenifier.egg-info/SOURCES.txt
 whale_itenifier.egg-info/dependency_links.txt
