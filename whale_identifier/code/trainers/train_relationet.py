@@ -32,10 +32,10 @@ class TrainRelationet:
         self.show_every = show_every
         if load_model:
             self.encoder.load_state_dict(torch.load(encoder_path))
-            self.relater.laod_state_dict(torch.load(relater_path))
+            self.relater.load_state_dict(torch.load(relater_path))
             self.encoder.train()
             self.relater.train()
-            logger.info('relater and encoder nets loaded!')
+            self.logger.info('relater and encoder nets loaded!')
         self.save = save
         self.save_path = save_path
 
