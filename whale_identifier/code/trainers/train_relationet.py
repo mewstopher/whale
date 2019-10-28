@@ -77,7 +77,7 @@ class TrainRelationet:
                 total += relater_output.shape[0]
                 predicted = torch.argmax(relater_output, 1)
                 labels = torch.argmax(one_hot_labels, 1)
-                correct += np.count_nonzero(predicted == labels)
+                correct += torch.tensor(predicted == labels).sum().item()
                 accuracy = correct/total
                 self.accuracies[epoch].append(accuracy)
                 if self.counter % self.show_every == 0:
