@@ -45,7 +45,7 @@ relater_optim = torch.optim.Adam(relater.parameters(), lr=.0001)
 
 
 trainer = TrainRelationet(encoder, relater, MSELoss, encoder_optim, relater_optim,
-                          train_loader,val_loader,EPOCHS, NUM_BATCHES, CLASSES,IMG_SIZE, device, save=True,
+                          train_loader,val_loader,EPOCHS, NUM_BATCHES, CLASSES,IMG_SIZE, device, show_every=1, save=True,
                           save_path = '../output/')
 
 trainer.run()

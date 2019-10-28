@@ -4,7 +4,7 @@ from torch.autograd import Variable
 import logging
 from datetime import datetime
 from whale_identifier.code.helper_functions import speak
-
+import numpy as np
 
 class TrainRelationet:
     """
@@ -13,6 +13,7 @@ class TrainRelationet:
     counter = 0
     losses = {}
     accuracies = {}
+    total = 0
 
     def __init__(self,encoder, relater, Loss,encoder_optim, relater_optim, train_loader, val_dataloader, num_epochs, num_batches, classes,img_size, device, model_path=None, save_path=None, save=False, load_model=False, show_every=50):
         self.logger = logging.getLogger(__name__)
@@ -44,8 +45,11 @@ class TrainRelationet:
             self.logger.info(f'saveing model at {save_path}')
 
     def train(self):
+        total = 0
+        correct = 0
         for epoch in range(self.num_epochs):
             self.losses[epoch] = []
+            self.accuracies[epoch] = []
             for data in self.train_loader:
                 self.counter += 1
                 processor = Processor(data, self.num_batches, self.classes, self.img_size,self.device)
@@ -70,8 +74,15 @@ class TrainRelationet:
                 loss.backward()
                 self.encoder_optim.step()
                 self.relater_optim.step()
+                total += relater_output.shape[0]
+                predicted = torch.argmax(relater_output, 1)
+                labels = torch.argmax(one_hot_labels, 1)
+                correct += np.count_nonzero(predicted == labels)
+                accuracy = correct/total
+                self.accuracies[epoch].append(accuracy)
                 if self.counter % self.show_every == 0:
                     self.logger.info(f'Loss at {self.counter}: {loss}')
+                    self.logger.info(f'Total accuracy at {self.counter}: {accuracy}')
             self.logger.info(f'average loss for epoch {epoch}: {np.mean(losses[epoch])}')
             if self.save:
                 torch.save(self.encoder.state_dict(), self.save_path + 'encoder' + str(datetime.now()).split()[0])
